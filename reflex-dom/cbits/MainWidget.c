@@ -10,7 +10,7 @@ jobject Reflex_Dom_Android_MainWidget_start(jobject activity, const char *url, c
   assert(url);
 
   JNIEnv *env;
-  jint attachResult = (*HaskellActivity_jvm)->AttachCurrentThread(HaskellActivity_jvm, &env, NULL);
+  jint attachResult = (*HaskellActivity_jvm)->AttachCurrentThread(HaskellActivity_jvm, (void **)&env, NULL);
   assert(attachResult == JNI_OK);
 
   jclass cls = (*env)->FindClass(env, "org/reflexfrp/reflexdom/MainWidget");
@@ -32,7 +32,7 @@ jobject Reflex_Dom_Android_MainWidget_start(jobject activity, const char *url, c
 
 void Reflex_Dom_Android_MainWidget_runJS(jobject jsExecutor, const char* js, size_t js_len) {
   JNIEnv *env;
-  jint attachResult = (*HaskellActivity_jvm)->AttachCurrentThread(HaskellActivity_jvm, &env, NULL);
+  jint attachResult = (*HaskellActivity_jvm)->AttachCurrentThread(HaskellActivity_jvm, (void **)&env, NULL);
   assert (attachResult == JNI_OK);
 
   (*env)->PushLocalFrame(env, 5);
@@ -55,7 +55,7 @@ void Reflex_Dom_Android_MainWidget_runJS(jobject jsExecutor, const char* js, siz
 
 void Reflex_Dom_Android_MainWidget_runHaskell(jobject jsExecutor, haskellCallback cb) {
   JNIEnv *env;
-  jint attachResult = (*HaskellActivity_jvm)->AttachCurrentThread(HaskellActivity_jvm, &env, NULL);
+  jint attachResult = (*HaskellActivity_jvm)->AttachCurrentThread(HaskellActivity_jvm, (void **)&env, NULL);
   assert (attachResult == JNI_OK);
 
   //TODO: Don't search for this method every time
@@ -100,7 +100,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_reflexfrp_reflexdom_MainWidget_00024JSaddl
   jbyteArray next_jstr = (*env)->NewByteArray(env, next_str_len);
   (*env)->SetByteArrayRegion(env, next_jstr, 0, next_str_len, next_str);
 
-  free(next_str);
+  free((void *)next_str);
 
   return next_jstr;
 }
