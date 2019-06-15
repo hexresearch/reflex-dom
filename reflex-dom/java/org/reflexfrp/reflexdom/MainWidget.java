@@ -31,9 +31,9 @@ import systems.obsidian.HaskellActivity;
 public class MainWidget {
   public static native void haskellRunCallback(long cb);
 
-  static {
-    System.loadLibrary("MainWidget");
-  }
+  // static {
+  //   System.loadLibrary("MainWidget");
+  // }
 
   private static Object startMainWidget(final HaskellActivity a, String url, long jsaddleCallbacks, final String initialJS) {
     CookieManager.setAcceptFileSchemeCookies(true); //TODO: Can we do this just for our own WebView?
