@@ -146,7 +146,7 @@ public class MainWidget {
           });
       }
 
-      public final void evaluateHaskell(long haskCallback) {
+      public final void evaluateHaskell(final long haskCallback) {
         hnd.post(new Runnable() {
             @Override
             public void run() {
