@@ -10,6 +10,8 @@ typedef struct JSaddleCallbacks {
   char * jsaddleJsData;
 } JSaddleCallbacks;
 
-typedef void (* haskellCallback) ();
+typedef struct HaskellCallback {
+  void (* haskellCallback) ();
+} HaskellCallback;
 
 #endif

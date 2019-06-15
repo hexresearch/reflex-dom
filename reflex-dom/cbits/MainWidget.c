@@ -53,7 +53,9 @@ void Reflex_Dom_Android_MainWidget_runJS(jobject jsExecutor, const char* js, siz
   (*env)->PopLocalFrame(env, 0);
 }
 
-void Reflex_Dom_Android_MainWidget_runHaskell(jobject jsExecutor, haskellCallback cb) {
+void Reflex_Dom_Android_MainWidget_runHaskell(jobject jsExecutor, HaskellCallback *cb) {
+  assert(cb);
+
   JNIEnv *env;
   jint attachResult = (*HaskellActivity_jvm)->AttachCurrentThread(HaskellActivity_jvm, (void **)&env, NULL);
   assert (attachResult == JNI_OK);
@@ -63,7 +65,7 @@ void Reflex_Dom_Android_MainWidget_runHaskell(jobject jsExecutor, haskellCallbac
   assert(cls);
   jmethodID evaluateHaskell = (*env)->GetMethodID(env, cls, "evaluateHaskell", "(J)V");
   assert(evaluateHaskell);
-  (*env)->CallVoidMethod(env, jsExecutor, evaluateHaskell, (jlong)haskellCallback);
+  (*env)->CallVoidMethod(env, jsExecutor, evaluateHaskell, (jlong)cb);
   if((*env)->ExceptionOccurred(env)) {
     __android_log_write(ANDROID_LOG_DEBUG, "MainWidget", "runHaskell exception");
     (*env)->ExceptionDescribe(env);
@@ -106,8 +108,8 @@ JNIEXPORT jbyteArray JNICALL Java_org_reflexfrp_reflexdom_MainWidget_00024JSaddl
 }
 
 JNIEXPORT void JNICALL Java_org_reflexfrp_reflexdom_MainWidget_haskellRunCallback (JNIEnv *env, jobject thisObj, jlong callbackLong) {
-  const haskellCallback callback = (const haskellCallback)callbackLong;
+  const HaskellCallback *callback = (const HaskellCallback *)callbackLong;
   if(callback) {
-    callback();
+    callback->haskellCallback();
   }
 }
