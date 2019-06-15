@@ -107,7 +107,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_reflexfrp_reflexdom_MainWidget_00024JSaddl
   return next_jstr;
 }
 
-JNIEXPORT void JNICALL Java_org_reflexfrp_reflexdom_MainWidget_haskellRunCallback (JNIEnv *env, jobject thisObj, jlong callbackLong) {
+JNIEXPORT void JNICALL Java_org_reflexfrp_reflexdom_MainWidget_haskellRunCallback (JNIEnv *env, jclass thisClass, jlong callbackLong) {
   const HaskellCallback *callback = (const HaskellCallback *)callbackLong;
   if(callback) {
     callback->haskellCallback();

@@ -29,7 +29,11 @@ import java.nio.charset.StandardCharsets;
 import systems.obsidian.HaskellActivity;
 
 public class MainWidget {
-  public native void haskellRunCallback(long cb);
+  public static native void haskellRunCallback(long cb);
+
+  static {
+    System.loadLibrary("MainWidget");
+  }
 
   private static Object startMainWidget(final HaskellActivity a, String url, long jsaddleCallbacks, final String initialJS) {
     CookieManager.setAcceptFileSchemeCookies(true); //TODO: Can we do this just for our own WebView?
