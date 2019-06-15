@@ -53,6 +53,23 @@ void Reflex_Dom_Android_MainWidget_runJS(jobject jsExecutor, const char* js, siz
   (*env)->PopLocalFrame(env, 0);
 }
 
+void Reflex_Dom_Android_MainWidget_runHaskell(jobject jsExecutor, haskellCallback cb) {
+  JNIEnv *env;
+  jint attachResult = (*HaskellActivity_jvm)->AttachCurrentThread(HaskellActivity_jvm, &env, NULL);
+  assert (attachResult == JNI_OK);
+
+  //TODO: Don't search for this method every time
+  jclass cls = (*env)->GetObjectClass(env, jsExecutor);
+  assert(cls);
+  jmethodID evaluateHaskell = (*env)->GetMethodID(env, cls, "evaluateHaskell", "(J)V");
+  assert(evaluateHaskell);
+  (*env)->CallVoidMethod(env, jsExecutor, evaluateHaskell, (jlong)haskellCallback);
+  if((*env)->ExceptionOccurred(env)) {
+    __android_log_write(ANDROID_LOG_DEBUG, "MainWidget", "runHaskell exception");
+    (*env)->ExceptionDescribe(env);
+  }
+}
+
 JNIEXPORT void JNICALL Java_org_reflexfrp_reflexdom_MainWidget_00024JSaddleCallbacks_startProcessing (JNIEnv *env, jobject thisObj, jlong callbacksLong) {
   const JSaddleCallbacks *callbacks = (const JSaddleCallbacks *)callbacksLong;
   (*(callbacks->jsaddleStart))();
@@ -86,4 +103,11 @@ JNIEXPORT jbyteArray JNICALL Java_org_reflexfrp_reflexdom_MainWidget_00024JSaddl
   free(next_str);
 
   return next_jstr;
+}
+
+JNIEXPORT void JNICALL Java_org_reflexfrp_reflexdom_MainWidget_haskellRunCallback (JNIEnv *env, jobject thisObj, jlong callbackLong) {
+  const haskellCallback callback = (const haskellCallback)callbackLong;
+  if(callback) {
+    callback();
+  }
 }

@@ -29,6 +29,8 @@ import java.nio.charset.StandardCharsets;
 import systems.obsidian.HaskellActivity;
 
 public class MainWidget {
+  public native void haskellRunCallback(long cb);
+
   private static Object startMainWidget(final HaskellActivity a, String url, long jsaddleCallbacks, final String initialJS) {
     CookieManager.setAcceptFileSchemeCookies(true); //TODO: Can we do this just for our own WebView?
 
@@ -136,6 +138,15 @@ public class MainWidget {
             @Override
             public void run() {
               wv.evaluateJavascript(jsStr, null);
+            }
+          });
+      }
+
+      public final void evaluateHaskell(long haskCallback) {
+        hnd.post(new Runnable() {
+            @Override
+            public void run() {
+              haskellRunCallback(haskCallback);
             }
           });
       }
