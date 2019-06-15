@@ -16,6 +16,10 @@ jobject Reflex_Dom_Android_MainWidget_start(jobject activity, const char *url, c
   jclass cls = (*env)->FindClass(env, "org/reflexfrp/reflexdom/MainWidget");
   assert(cls);
   jmethodID startMainWidget = (*env)->GetStaticMethodID(env, cls, "startMainWidget", "(Lsystems/obsidian/HaskellActivity;Ljava/lang/String;JLjava/lang/String;)Ljava/lang/Object;");
+  if((*env)->ExceptionOccurred(env)) {
+    __android_log_write(ANDROID_LOG_DEBUG, "MainWidget", "startMainWidget is not found exception");
+    (*env)->ExceptionDescribe(env);
+  }
   assert(startMainWidget);
 
   jstring jurl = (*env)->NewStringUTF(env, url);
