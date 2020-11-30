@@ -24,7 +24,7 @@ module Reflex.Dom.Prerender
 
 import Control.Monad.Primitive (PrimMonad(..))
 import Control.Monad.Reader
-import Control.Monad.Ref (MonadRef(..))
+import Control.Monad.Ref (MonadRef(..), MonadAtomicRef(..))
 import Data.IORef (IORef, newIORef)
 import Data.Semigroup (Semigroup)
 import Data.Text (Text)
@@ -165,6 +165,8 @@ instance Monad m => MonadRef (UnrunnableT js t m) where
   newRef _ = unrunnable
   readRef _ = unrunnable
   writeRef _ _ = unrunnable
+instance Monad m => MonadAtomicRef (UnrunnableT js t m) where
+  atomicModifyRef _ _ = unrunnable
 instance Monad m => HasDocument (UnrunnableT js t m) where
   askDocument = unrunnable
 instance Monad m => HasJSContext (UnrunnableT js t m) where
@@ -203,12 +205,13 @@ instance Monad m => MonadReflexCreateTrigger t (UnrunnableT js t m) where
   newFanEventWithTrigger _ = unrunnable
 instance Monad m => MonadFix (UnrunnableT js t m) where
   mfix _ = unrunnable
-instance Monad m => MonadHold t (UnrunnableT js t m) where
+instance (Monad m, MonadHold t m) => MonadHold t (UnrunnableT js t m) where
   hold _ _ = unrunnable
   holdDyn _ _ = unrunnable
   holdIncremental _ _ = unrunnable
   buildDynamic _ _ = unrunnable
   headE _ = unrunnable
+  now = unrunnable
 instance Monad m => MonadSample t (UnrunnableT js t m) where
   sample _ = unrunnable
 instance Monad m => MonadIO (UnrunnableT js t m) where
@@ -226,7 +229,7 @@ instance (Reflex t, Monad m) => DomRenderHook t (UnrunnableT js t m) where
   withRenderHook _ _ = unrunnable
   requestDomAction _ = unrunnable
   requestDomAction_ _ = unrunnable
-instance (Reflex t, Monad m) => Prerender JS' t (UnrunnableT js t m) where
+instance (Reflex t, Monad m, MonadHold t m) => Prerender JS' t (UnrunnableT js t m) where
   type Client (UnrunnableT js t m) = UnrunnableT js t m
   prerender _ _ = unrunnable
 
